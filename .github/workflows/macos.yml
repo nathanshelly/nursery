@@ -1,0 +1,12 @@
+name: catalina
+
+on: [push]
+
+jobs:
+  catalina:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run setup
+        run: ./setup.sh
+
