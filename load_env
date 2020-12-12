@@ -1,0 +1,2 @@
+echo "SHELL: $SHELL"
+eval "$(direnv export zsh)"
