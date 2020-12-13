@@ -1,30 +1,60 @@
 {
-  description = "sand";
+  description = "locations - find your friends";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-20.09-darwin";
-
     utils.url = "github:numtide/flake-utils";
+    naersk.url = "github:nmattia/naersk";
+    mozillapkgs = {
+      url = "github:mozilla/nixpkgs-mozilla";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, utils }:
+  outputs = { self, nixpkgs, utils, naersk, mozillapkgs }:
     utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages."${system}";
+
+        # get our specific rust version
+        mozilla = pkgs.callPackage (mozillapkgs + "/package-set.nix") {};
+        rust = (
+          mozilla.rustChannelOf {
+            date = "2020-12-07";
+            channel = "nightly";
+            sha256 = "sha256-MXTXVVKZ1H1LG4Y+SlKMHjVv/HI6U8bkCooNYI7Hhl0=";
+          }
+        ).rust;
+
+        # override the version used in naersk
+        naersk-lib = naersk.lib."${system}".override {
+          cargo = rust;
+          rustc = rust;
+          rust-src = rust;
+        };
       in
         rec {
           # `nix build`
-          packages.hello = pkgs.hello;
-          defaultPackage = packages.hello;
+          packages.server = naersk-lib.buildPackage {
+            pname = "locations";
+            root = ./.;
+          };
+          packages.docker = pkgs.dockerTools.buildImage {
+            name = "locations";
+            contents = [ self.packages.x86_64-linux.server ];
+            config.Cmd = [ "locations" ];
+          };
+          defaultPackage = packages.server;
 
           # `nix run`
-          apps.hello = utils.lib.mkApp { drv = packages.hello; };
-          defaultApp = apps.hello;
+          apps.server = utils.lib.mkApp {
+            drv = packages.server;
+          };
+          defaultApp = apps.server;
 
           # `nix develop`
           devShell = pkgs.mkShell {
             # supply the specific rust version
-            nativeBuildInputs = with pkgs; [ hello ];
+            nativeBuildInputs = with pkgs; [ rust ];
           };
         }
     );
