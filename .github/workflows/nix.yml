@@ -17,4 +17,4 @@ jobs:
           experimental-features = nix-command flakes
       # would prefer to do `nix run ...` but running into cross-plat dependency
       # issues that require a dev shell
-    - run: nix develop --command cargo run
+    - run: nix develop --command ./test

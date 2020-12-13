@@ -1,0 +1,11 @@
+#! /usr/bin/env bash
+
+which cargo
+which pkg-config
+
+cargo build
+
+ls
+ls target
+
+cargo run
