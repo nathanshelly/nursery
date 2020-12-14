@@ -34,13 +34,15 @@
         rec {
           # `nix build`
           packages.server = naersk-lib.buildPackage {
+            # buildInputs = ?
             pname = "locations";
             root = ./.;
           };
-          packages.docker = pkgs.dockerTools.buildImage {
+          packages.docker = pkgs.dockerTools.buildLayeredImage {
             name = "locations";
             contents = [ self.packages.x86_64-linux.server ];
             config.Cmd = [ "locations" ];
+            # config.Expose = [];
           };
           defaultPackage = packages.server;
 
@@ -53,7 +55,7 @@
           # `nix develop`
           devShell = pkgs.mkShell {
             # supply the specific rust version
-            nativeBuildInputs = with pkgs; [ rust ];
+            nativeBuildInputs = with pkgs; [ rust awscli ];
           };
         }
     );
