@@ -56,6 +56,10 @@
           devShell = pkgs.mkShell {
             # supply the specific rust version
             nativeBuildInputs = with pkgs; [ rust awscli ];
+
+            shellHook = ''
+              export SOURCE_CODE="${self.outPath}"
+            '';
           };
         }
     );
