@@ -14,8 +14,8 @@ echo "Nix installed"
 . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 
 # TODO: avoid needing to recreate channels owned by root
-# sudo rm -rf ~/.nix-defexpr
-# nix-channel --update
+sudo rm -rf ~/.nix-defexpr
+nix-channel --update
 
 nix-build \
   https://github.com/LnL7/nix-darwin/archive/master.tar.gz \
