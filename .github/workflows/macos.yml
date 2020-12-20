@@ -1,10 +1,10 @@
-name: catalina
+name: big sur
 
 on: [push]
 
 jobs:
-  catalina:
-    runs-on: macos-10.15
+  big-sur:
+    runs-on: macos-11.0
     steps:
       - uses: actions/checkout@v1
       - name: Run setup
