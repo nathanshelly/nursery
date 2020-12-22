@@ -4,42 +4,23 @@
 
 echo "Starting Nix setup"
 
-true | sh <(curl -L https://nixos.org/nix/install) \
+true | sh <(curl -L https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20201221_9fab14a/install) \
   --daemon \
   --darwin-use-unencrypted-nix-store-volume
-
-echo "Nix installed"
 
 # initialize `nix` for next steps - same line added to /etc/zshrc by installer
 . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 
-nix-build \
-  https://github.com/LnL7/nix-darwin/archive/master.tar.gz \
-  -A installer > /dev/null
+printf "\n\n\nNix installed\n\n\n"
 
-if ./result/bin/darwin-installer; then
-  echo '`nix-darwin` installed'
-else
-  echo '`nix-darwin` installer failed. Please fix any issues and try again.'
-  exit 1
-fi
+nix flake show
 
-printf "\n\nnix-darwin setup complete\n\n"
+printf "\n\n\nNIX version: %s\n\n\n" "$(nix --version)"
 
-# make just installed `darwin-rebuild` command available in current script
-[ -f /etc/static/bashrc ] && source /etc/static/bashrc
+nix build .#darwinConfigurations.default.system
 
-# move nix.conf file so it can be recreated and subsequently owned by nix-darwin
-if [[ -f /etc/nix/nix.conf ]] && ! grep --quiet flakes < /etc/nix/nix.conf; then
-  sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.bak
-fi
+bat README.md
 
-printf "\n\nbuilding first darwin generation\n\n"
-darwin-rebuild switch -I darwin-config="./darwin.nix"
+./result/sw/bin/darwin-rebuild switch --flake .
 
-printf "\n\nNIX version: %s\n\n" "$(nix --version)"
-
-printf "\n\nbuilding w/ flakes\n\n"
-darwin-rebuild switch --flake ".#default" --impure --show-trace
-
-echo "flakes setup"
+bat README.md
