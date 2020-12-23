@@ -21,6 +21,6 @@ nix --experimental-features 'nix-command flakes' build .#darwinConfigurations.de
 
 bat README.md
 
-./result/sw/bin/darwin-rebuild switch --flake .#darwinConfigurations.default
+./result/sw/bin/darwin-rebuild switch --flake .#default
 
 bat README.md
