@@ -17,7 +17,7 @@ nix --experimental-features 'nix-command flakes' flake show
 
 printf "\n\n\nNIX version: %s\n\n\n" "$(nix --version)"
 
-nix --experimental-features 'nix-command flakes' build .#darwinConfigurations.default.system
+nix --experimental-features 'nix-command flakes' build .#darwinConfigurations.default.system --impure
 
 bat README.md
 
