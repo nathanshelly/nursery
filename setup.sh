@@ -13,11 +13,11 @@ true | sh <(curl -L https://github.com/numtide/nix-flakes-installer/releases/dow
 
 printf "\n\n\nNix installed\n\n\n"
 
-nix flake show
+nix --experimental-features 'nix-command flakes' flake show
 
 printf "\n\n\nNIX version: %s\n\n\n" "$(nix --version)"
 
-nix build .#darwinConfigurations.default.system
+nix --experimental-features 'nix-command flakes' build .#darwinConfigurations.default.system
 
 bat README.md
 
